@@ -1,0 +1,6 @@
+importFrom("stats", "as.formula", "lm")
+export(DAer)
+export(impy)
+export(intBeta)
+export(DAer_est)
+
