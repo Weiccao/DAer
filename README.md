@@ -4,11 +4,11 @@
  
 ## Installation
 You can install the **development** version from
-[Github](https://github.com/Weiccao/RoME)
+[Github](https://github.com/Weiccao/DAer))
 
 ```s
 # install.packages("remotes")
-remotes::install_github("Weiccao/RoME")
+remotes::install_github("Weiccao/DAer)")
 ```
 
 ## Usage
