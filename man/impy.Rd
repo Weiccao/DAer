@@ -11,7 +11,7 @@ impy(dataset, beta, censor.type = c("right", " left", "interval"))
 
 \item{beta}{The imputation parameters}
 
-\item{censor.type}{Censoring machanism, 'right' for right censoring, 'left' for left censoring, 'interval' for interval censoring}
+\item{censor.type}{Censoring  mechanism, 'right' for right censoring, 'left' for left censoring, 'interval' for interval censoring}
 }
 \value{
 Imputation value for censoring samples

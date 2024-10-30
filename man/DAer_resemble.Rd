@@ -7,7 +7,11 @@
 DAer_resemble(betahat, yhat, H)
 }
 \arguments{
-\item{H}{}
+\item{betahat}{estimate}
+
+\item{yhat}{fitted value}
+
+\item{H}{itertation time}
 }
 \description{
 Resemble iteration

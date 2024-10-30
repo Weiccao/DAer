@@ -22,7 +22,7 @@ DAer(
 
 \item{H}{Iteration time, default H = 20}
 
-\item{censortype}{Censoring machanism, 'right' for right censoring, 'left' for left censoring, 'interval' for interval censoring.}
+\item{censortype}{Censoring  mechanism, 'right' for right censoring, 'left' for left censoring, 'interval' for interval censoring.}
 
 \item{formula}{A formula expression for regression model}
 }

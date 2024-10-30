@@ -2,15 +2,15 @@
 #'
 #' Return initialized imputation parameters, the expectile parameter is estimated under common slope assumption.
 #'
-#' @import expectreg
+#' @importFrom expectreg expectile
+#'
+#'
 #' @param dataset A censoring dataset
 #' @param imptau The imputation expectile. The default value isn\{0.01,...0.09\}
 #' @param formula A formula expression for regression model
 #'
 #' @return Initialized imputation parameters
 #' @export
-
-
 
 intBeta <- function(dataset, imptau = seq(0.01,0.99,0.01), formula){
   ind <- dataset[['delta']]
@@ -39,11 +39,11 @@ intBeta <- function(dataset, imptau = seq(0.01,0.99,0.01), formula){
 #' Return the imputaion value for censoring samples
 #'
 #' @import expectreg
-#' @import dplyr
+#' @importFrom dplyr %>%
 #'
 #' @param dataset A censoring dataset
 #' @param beta The imputation parameters
-#' @param censor.type Censoring machanism, 'right' for right censoring, 'left' for left censoring, 'interval' for interval censoring
+#' @param censor.type Censoring  mechanism, 'right' for right censoring, 'left' for left censoring, 'interval' for interval censoring
 #'
 #' @return Imputation value for censoring samples
 #' @export
@@ -110,6 +110,10 @@ impy <- function (dataset, beta, censor.type = c('right', ' left', 'interval')) 
 
 #' Function for Data Augmentation
 #'
+#' @import expectreg
+#' @import dirttee
+#' @import dplyr
+#'
 #' @param dataset A censoring dataset
 #' @param impY Dependent value after imputation
 #' @param Kn A set of expectile levels of interest
@@ -149,9 +153,9 @@ DAer_est <- function(dataset, impY, Kn = seq(0.1,0.9,0.1),
 
 #' Resemble iteration
 #'
-#' @param beta.hat
-#' @param y.hat
-#' @param H
+#' @param betahat estimate
+#' @param yhat fitted value
+#' @param H itertation time
 #'
 
 DAer_resemble <- function(betahat, yhat, H){
@@ -178,14 +182,15 @@ DAer_resemble <- function(betahat, yhat, H){
 #' @param Kn A set of expectile levels of interest
 #' @param imptau The imputation expectile. The default value isn\{0.01,...0.09\}
 #' @param H Iteration time, default H = 20
-#' @param censortype Censoring machanism, 'right' for right censoring, 'left' for left censoring, 'interval' for interval censoring.
+#' @param censortype Censoring  mechanism, 'right' for right censoring, 'left' for left censoring, 'interval' for interval censoring.
 #' @param formula A formula expression for regression model
 #'
 #' @return A list object, which is basically a list consisting of:
 #' \item{finalbeta}{Parameter estimation of interest}
 #' \item{finalyhat}{Fitted value}
 #' @export
-#' #' @example
+#'
+#' @example
 #' library(dirttee)
 #' library(dplyr)
 #' data("colcancer")
@@ -197,7 +202,7 @@ DAer_resemble <- function(betahat, yhat, H){
 #' res <- DAer(dat, censortype = 'right', formula = f)
 
 DAer <- function(dataset, imptau = seq(0.01,0.99,0.01), Kn = seq(0.1,0.9,0.1),
-                     H = 20, censortype = c('right', ' left', 'interval'), formula){
+                 H = 20, censortype = c('right', ' left', 'interval'), formula){
 
   intbeta  <- intBeta(dataset, imptau,formula = formula)
 
