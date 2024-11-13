@@ -1,0 +1,9 @@
+importFrom("stats", "as.formula", "lm")
+import(dplyr)
+import(expectreg)
+import(dirttee)
+export(DAer)
+export(impy)
+export(intBeta)
+export(DAer_est)
+
