@@ -7,7 +7,7 @@
 DAer_est(
   dataset,
   impY,
-  Kn = seq(0.1, 0.9, 0.1),
+  tau = seq(0.1, 0.9, 0.1),
   imptau = seq(0.01, 0.99, 0.01),
   formula
 )
@@ -17,7 +17,7 @@ DAer_est(
 
 \item{impY}{Dependent value after imputation}
 
-\item{Kn}{A set of expectile levels of interest}
+\item{tau}{A set of expectile levels of interest}
 
 \item{imptau}{The imputation expectile. The default value isn\{0.01,...0.09\}}
 

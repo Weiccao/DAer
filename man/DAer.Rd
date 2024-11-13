@@ -7,7 +7,7 @@
 DAer(
   dataset,
   imptau = seq(0.01, 0.99, 0.01),
-  Kn = seq(0.1, 0.9, 0.1),
+  tau = seq(0.1, 0.9, 0.1),
   H = 20,
   censortype = c("right", " left", "interval"),
   formula
@@ -18,7 +18,7 @@ DAer(
 
 \item{imptau}{The imputation expectile. The default value isn\{0.01,...0.09\}}
 
-\item{Kn}{A set of expectile levels of interest}
+\item{tau}{A set of expectile levels of interest}
 
 \item{H}{Iteration time, default H = 20}
 
