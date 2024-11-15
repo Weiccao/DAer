@@ -1,5 +1,23 @@
-#' Title Function for generating simulation data
+#' Title Function for generating censored data
 #'
+#' @param n Sample size
+#' @param xdis Distribution of X
+#' @param edis Distribution of error term
+#' @param sd Stand error, when X simulate from Gaussian distribution
+#' @param tau The interested expectile level
+#' @param beta0 True value of intercept
+#' @param beta1 True value of slop
+#' @param gamma0 True value of intercept for heterogeneous scenario
+#' @param gamma1 True value of slope  for heterogeneous scenario
+#' @param censor.type Censoring mechanism, 'right' for right censoring, 'left' for left censoring, 'interval' for interval censoring.
+#' @param SNR Signal-to-noise ratio
+#' @param c0 Parameter to generate right censoring time C
+#' @param l0 Parameter to generate left fixed censoring time L
+#' @param rate Parameter to control censored rate
+#'
+#' @return A censored dataset, a list object
+#' @export
+
 data.generate <- function(n, xdis, edis, sd = 0.5, tau = seq(0.1,0.9,0.1),
                           beta0 , beta1, gamma0, gamma1,
                           censor.type, SNR, c0 = 0, l0 = -0.3, rate){

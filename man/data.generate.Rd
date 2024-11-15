@@ -2,7 +2,7 @@
 % Please edit documentation in R/datagenerate.R
 \name{data.generate}
 \alias{data.generate}
-\title{Title Function for generating simulation data}
+\title{Title Function for generating censored data}
 \usage{
 data.generate(
   n,
@@ -21,6 +21,38 @@ data.generate(
   rate
 )
 }
+\arguments{
+\item{n}{Sample size}
+
+\item{xdis}{Distribution of X}
+
+\item{edis}{Distribution of error term}
+
+\item{sd}{Stand error, when X simulate from Gaussian distribution}
+
+\item{tau}{The interested expectile level}
+
+\item{beta0}{True value of intercept}
+
+\item{beta1}{True value of slop}
+
+\item{gamma0}{True value of intercept for heterogeneous scenario}
+
+\item{gamma1}{True value of slope  for heterogeneous scenario}
+
+\item{censor.type}{Censoring mechanism, 'right' for right censoring, 'left' for left censoring, 'interval' for interval censoring.}
+
+\item{SNR}{Signal-to-noise ratio}
+
+\item{c0}{Parameter to generate right censoring time C}
+
+\item{l0}{Parameter to generate left fixed censoring time L}
+
+\item{rate}{Parameter to control censored rate}
+}
+\value{
+A censored dataset, a list object
+}
 \description{
-Title Function for generating simulation data
+Title Function for generating censored data
 }
