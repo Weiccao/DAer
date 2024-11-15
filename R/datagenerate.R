@@ -18,7 +18,7 @@
 #' @return A censored dataset, a list object
 #' @export
 
-data.generate <- function(n, xdis, edis, sd = 0.5, tau = seq(0.1,0.9,0.1),
+datagenerate <- function(n, xdis, edis, sd = 0.5, tau = seq(0.1,0.9,0.1),
                           beta0 , beta1, gamma0, gamma1,
                           censor.type, SNR, c0 = 0, l0 = -0.3, rate){
   library(dplyr)
