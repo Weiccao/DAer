@@ -71,10 +71,12 @@ impy <- function (dataset, beta, censor.type = c('right', ' left', 'interval')) 
   }
 
   else if(censor.type == 'left'){
+    l0 <- dataset[['l0']]
     if (length(cen.ind)) {
       for (j in 1:length(cen.ind)) {
-        ind <- cen.ind[j]; yj <- beta[,1]+beta[,-1]%*%X[,ind]
-        imp.ind <- which(yj < Y[ind])
+        ind <- cen.ind[j]
+        yj <- beta[,1]+beta[,-1]%*%X[,ind]
+        imp.ind <- which(yj < l0)
         if(length(imp.ind) !=0){
           if (length(imp.ind) != 1)
             Y[ind] <- yj[sample(imp.ind, 1)]
@@ -86,12 +88,12 @@ impy <- function (dataset, beta, censor.type = c('right', ' left', 'interval')) 
   }
 
   else{
-    cl <- dataset[['cl']]
+    l0 <- dataset[['l0']]
     if (length(cen.ind)) {
       for (j in 1:length(cen.ind)) {
         ind <- cen.ind[j]
         yj <- beta[,1]+beta[,-1]%*%X[,ind]
-        imp.ind <- which(yj > cl &  yj < Y[ind])
+        imp.ind <- which(yj > l0 &  yj < Y[ind])
         if(length(imp.ind) !=0){
           if (length(imp.ind) != 1)
             Y[ind] <- yj[sample(imp.ind, 1)]
