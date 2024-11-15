@@ -6,4 +6,5 @@ export(DAer)
 export(impy)
 export(intBeta)
 export(DAer_est)
+export(datagenerate)
 
