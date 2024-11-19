@@ -1,6 +1,7 @@
 #' Generates synthetic datasets for simulation purposes.
 #'
 #' @importFrom("stats", "pnorm", "rnorm", "rt", "runif", "var")
+#' @importFrom("dplyr", "%>%")
 #' @import MASS
 #'
 #' @param n Sample size
@@ -24,7 +25,6 @@
 datagenerate <- function(n, xdis, edis, sd = 0.5, tau = seq(0.1,0.9,0.1),
                           beta0 , beta1, gamma0, gamma1,
                           censor.type, SNR, c0 = 0, l0 = -0.3, rate){
-  library(dplyr)
   if(xdis == 'norm'){
     sd.Z <- matrix(c(1,sd, sd,1),2,2)
     Z <- MASS::mvrnorm(n=n, mu=c(0,0), Sigma=sd.Z)

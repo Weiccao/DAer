@@ -1,6 +1,6 @@
 import(stats)
 import(MASS)
-import(dplyr)
+importFrom("dplyr", "%>%")
 import(expectreg)
 import(dirttee)
 export(DAer)
