@@ -1,4 +1,5 @@
-importFrom("stats", "as.formula", "lm")
+import(stats)
+import(MASS)
 import(dplyr)
 import(expectreg)
 import(dirttee)

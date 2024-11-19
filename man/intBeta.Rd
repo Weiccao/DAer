@@ -2,7 +2,7 @@
 % Please edit documentation in R/DAerreg.R
 \name{intBeta}
 \alias{intBeta}
-\title{Function for parameters initialization}
+\title{Initializes the imputation parameters and returns them.}
 \usage{
 intBeta(dataset, imptau = seq(0.01, 0.99, 0.01), formula)
 }

@@ -1,9 +1,12 @@
-#' Title Function for generating censored data
+#' Generates synthetic datasets for simulation purposes.
+#'
+#' @importFrom("stats", "pnorm", "rnorm", "rt", "runif", "var")
+#' @import MASS
 #'
 #' @param n Sample size
 #' @param xdis Distribution of X
 #' @param edis Distribution of error term
-#' @param sd Stand error, when X simulate from Gaussian distribution
+#' @param sd Stand error, when X simulated from Gaussian distribution
 #' @param tau The interested expectile level
 #' @param beta0 True value of intercept
 #' @param beta1 True value of slop

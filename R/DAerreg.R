@@ -1,4 +1,4 @@
-#' Function for parameters initialization
+#' Initializes the imputation parameters and returns them.
 #'
 #' Return initialized imputation parameters, the expectile parameter is estimated under common slope assumption.
 #'
@@ -34,18 +34,18 @@ intBeta <- function(dataset, imptau = seq(0.01,0.99,0.01), formula){
 }
 
 
-#' Function for imputation censoring samples
+#' Computes and returns the imputed values for censored samples.
 #'
-#' Return the imputaion value for censoring samples
+#' Return the imputation value for censoring samples
 #'
 #' @import expectreg
-#' @importFrom dplyr %>%
+#' @importFrom("dplyr", "%>%")
 #'
 #' @param dataset A censoring dataset
 #' @param beta The imputation parameters
-#' @param censor.type Censoring  mechanism, 'right' for right censoring, 'left' for left censoring, 'interval' for interval censoring
+#' @param censor.type The censoring mechanism. Options include right-censoring, left-censoring, and interval-censoring.
 #'
-#' @return Imputation value for censoring samples
+#' @return Imputed value for censoring samples
 #' @export
 #'
 #'
@@ -118,8 +118,8 @@ impy <- function (dataset, beta, censor.type = c('right', ' left', 'interval')) 
 #'
 #' @param dataset A censoring dataset
 #' @param impY Dependent value after imputation
-#' @param tau A set of expectile levels of interest
-#' @param imptau The imputation expectile. The default value isn\{0.01,...0.09\}
+#' @param tau The expectile level, representing the target point on the response distribution.
+#' @param imptau TA sequence of expectile levels used for imputing censored values. The default is a dense sequence from 0.01 to 0.99.
 #' @param formula A formula expression for regression model
 #'
 #' @return A list object, which is basically a list consisting of:
@@ -153,14 +153,14 @@ DAer_est <- function(dataset, impY, tau = seq(0.1,0.9,0.1),
   return(result = list(bhat = bhat, yhat = yhat, intbeta = intbeta))
 }
 
-#' Resemble iteration
+#' Combines the estimators from multiple iterations to produce a robust and aggregated estimate.
 #'
-#' @param betahat estimate
+#' @param betahat estimators
 #' @param yhat fitted value
-#' @param H itertation time
+#' @param H iteration time
 #'
 
-DAer_resemble <- function(betahat, yhat, H){
+DAer_ensemble <- function(betahat, yhat, H){
   finalbeta <- 0
   finaly <- 0
   for (h in 1:H) {
@@ -174,21 +174,21 @@ DAer_resemble <- function(betahat, yhat, H){
 }
 
 
-#' Data Augmentation for censored expectile regression
+#' Implements the data augmentation steps specific to expectile regression.
 #'
 #' @import expectreg
 #' @import dirttee
 #' @import dplyr
 #'
 #' @param dataset A censoring dataset
-#' @param tau A set of expectile levels of interest
-#' @param imptau The imputation expectile. The default value isn\{0.01,...0.09\}
-#' @param H Iteration time, default H = 20
+#' @param tau The expectile level, representing the target point on the response distribution.
+#' @param imptau A sequence of expectile levels used for imputing censored values. The default is a dense sequence from 0.01 to 0.99.
+#' @param H The total number of iterations for the algorithm. The default value is set to 20.
 #' @param censortype Censoring  mechanism, 'right' for right censoring, 'left' for left censoring, 'interval' for interval censoring.
-#' @param formula A formula expression for regression model
+#' @param formula The regression formula, consisting of the response variable, '~' and the sum of all effects that should be taken into consideration.
 #'
 #' @return A list object, which is basically a list consisting of:
-#' \item{finalbeta}{Parameter estimation of interest}
+#' \item{finalbeta}{Parameter estimation at interest $tau$ level}
 #' \item{finalyhat}{Fitted value}
 #' @export
 #'
@@ -220,6 +220,6 @@ DAer <- function(dataset, imptau = seq(0.01,0.99,0.01), tau = seq(0.1,0.9,0.1),
 
     intbeta <- result$intbeta
   }
-  result <- DAer_resemble(betahat, yhat, H=H)
+  result <- DAer_ensemble(betahat, yhat, H=H)
   return(result)
 }

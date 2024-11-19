@@ -17,9 +17,9 @@ DAer_est(
 
 \item{impY}{Dependent value after imputation}
 
-\item{tau}{A set of expectile levels of interest}
+\item{tau}{The expectile level, representing the target point on the response distribution.}
 
-\item{imptau}{The imputation expectile. The default value isn\{0.01,...0.09\}}
+\item{imptau}{TA sequence of expectile levels used for imputing censored values. The default is a dense sequence from 0.01 to 0.99.}
 
 \item{formula}{A formula expression for regression model}
 }

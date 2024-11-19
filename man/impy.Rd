@@ -2,7 +2,7 @@
 % Please edit documentation in R/DAerreg.R
 \name{impy}
 \alias{impy}
-\title{Function for imputation censoring samples}
+\title{Computes and returns the imputed values for censored samples.}
 \usage{
 impy(dataset, beta, censor.type = c("right", " left", "interval"))
 }
@@ -11,11 +11,11 @@ impy(dataset, beta, censor.type = c("right", " left", "interval"))
 
 \item{beta}{The imputation parameters}
 
-\item{censor.type}{Censoring  mechanism, 'right' for right censoring, 'left' for left censoring, 'interval' for interval censoring}
+\item{censor.type}{The censoring mechanism. Options include right-censoring, left-censoring, and interval-censoring.}
 }
 \value{
-Imputation value for censoring samples
+Imputed value for censoring samples
 }
 \description{
-Return the imputaion value for censoring samples
+Return the imputation value for censoring samples
 }
