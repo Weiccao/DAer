@@ -11,7 +11,7 @@ Imports:
     MASS
 Version: 0.1.0
 Authors@R: c(person("Shanshan", "Wang", email = "sswang@buaa.edu.cn", role = "aut"),
-  person("Wei", "Cao", email = "caowei2208@buaa.edu.cn", role = "cre"))
+  person("Wei", "Cao", email = "by2208102@buaa.edu.cn", role = "cre"))
 Maintainer: Cao Wei <caowei2208@buaa.edu.cn>
 License: GPL-3
 Encoding: UTF-8
