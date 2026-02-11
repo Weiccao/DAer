@@ -1,8 +1,4 @@
-library(dplyr)
-library(tidyr)
-library(ggplot2)
-library(stringr)
-library(patchwork)
+# Requires packages: survminer, survival, ggsci, dplyr, tidyr, ggplot2, stringr, patchwork
 
 #' @title load_and_summarize_results
 #' @description Load raw simulation results from .Rdata files, unnest replication results,
@@ -156,8 +152,10 @@ create_single_panel <- function(data, coeff_label, caption_text = NULL) {
 #' @param summary_df Tidy data frame of MSE results
 #' @param scenario_to_plot Scenario name to plot
 #' @param output_dir Directory to save the final stacked plot
+#' @param set_device '.pdf' and '.eps'
 #' @return Saves the combined plot as an EPS file; returns nothing
-create_stacked_plot <- function(summary_df, scenario_to_plot, output_dir = "Figures/MSE") {
+create_stacked_plot <- function(summary_df, scenario_to_plot, output_dir,
+                                set_device = "pdf") {
   
   # Create output directory if it does not exist
   dir.create(output_dir, recursive = TRUE, showWarnings = FALSE)
@@ -166,7 +164,7 @@ create_stacked_plot <- function(summary_df, scenario_to_plot, output_dir = "Figu
   base_data <- summary_df %>%
     filter(scenario == scenario_to_plot) %>%
     mutate(
-      coefficient_label = str_replace(coefficient, "beta_", "beta[") %>% paste0("](tau)"), # Convert to plot expression
+      coefficient_label = stringr::str_replace(coefficient, "beta_", "beta[") %>% paste0("](tau)"), # Convert to plot expression
       rate_label = factor(censor_rate * 100)
     )
   
@@ -203,7 +201,7 @@ create_stacked_plot <- function(summary_df, scenario_to_plot, output_dir = "Figu
   })
   
   # Stack all rows vertically
-  final_plot_layout <- wrap_plots(plots_by_n_row, ncol = 1)
+  final_plot_layout <- patchwork::wrap_plots(plots_by_n_row, ncol = 1)
   
   # Add shared legend at bottom
   final_plot <- final_plot_layout + 
@@ -215,8 +213,8 @@ create_stacked_plot <- function(summary_df, scenario_to_plot, output_dir = "Figu
     )
   
   # Save plot as EPS file
-  output_filename <- file.path(output_dir, sprintf("mse_%s.eps", scenario_to_plot))
-  ggsave(output_filename, plot = final_plot, device = "eps", width = 10, height = 10)
+  output_filename <- file.path(output_dir, sprintf("mse_%s.%s", scenario_to_plot, set_device))
+  ggsave(output_filename, plot = final_plot,  width = 10, height = 10)
   
   cat(sprintf("Stacked plot for scenario '%s' saved to %s\n", scenario_to_plot, output_filename))
 }
@@ -229,10 +227,11 @@ create_stacked_plot <- function(summary_df, scenario_to_plot, output_dir = "Figu
 #' @param x_axis_label Label for the x-axis
 #' @param filename File name to save the plot (under "Figures" folder)
 #' @return Saves the plot as a file; prints a message to console
-plot_surv <- function(fit_object, legend_labs, x_axis_label, filename) {
+plot_surv <- function(fit_object, legend_labs, x_axis_label, 
+                      save_path, filename) {
   
   # Create survival plot using ggsurvplot
-  p <- ggsurvplot(
+  suppressWarnings({p <- survminer::ggsurvplot(
     fit = fit_object,           
     pval = TRUE,                   # Display p-value for log-rank test
     conf.int = TRUE,               # Show confidence intervals
@@ -248,10 +247,10 @@ plot_surv <- function(fit_object, legend_labs, x_axis_label, filename) {
     surv.median.line = "hv",       # Add median survival lines (horizontal/vertical)
     ggtheme = theme_bw(),           # Use black-and-white theme
     palette = "lancet"             # Use lancet color palette
-  )
+  )})
   
   # Save the plot to the "Figures" folder
-  full_path <- file.path("Figures", filename)
+  full_path <- file.path(save_path, filename)
   ggsave(
     filename = full_path, 
     plot = p$plot,
@@ -272,10 +271,10 @@ plot_surv <- function(fit_object, legend_labs, x_axis_label, filename) {
 #' @param vars_to_plot Character vector of variable names to plot
 #' @param file_format File format to save plots (default "eps")
 #' @return Saves one plot per variable in "Figures/fig-turnover/beta"
-plot_CI <- function(summary_df, vars_to_plot, file_format = "eps") {
+plot_CI <- function(summary_df, vars_to_plot, file_format = "eps", save_path) {
   
   # Create output directory if it does not exist
-  if (!dir.exists("Figures/fig-turnover/beta")) dir.create("Figures/fig-turnover/beta")
+  if (!dir.exists(save_path)) dir.create(save_path)
   
   # Loop over each variable to plot
   for (variable in vars_to_plot) {
@@ -305,7 +304,7 @@ plot_CI <- function(summary_df, vars_to_plot, file_format = "eps") {
       geom_point(size = 3.5, aes(shape = Method)) +        # Points for mean estimates
       scale_y_continuous(labels = scales::label_number(accuracy = 0.01), limits = final_y_limits) + # Y-axis formatting
       scale_x_continuous(breaks = seq(0.1, 0.9, 0.1), limits = c(0.1, 0.9)) + # X-axis
-      scale_color_lancet() +  # Custom color palette
+      ggsci::scale_color_lancet() +  # Custom color palette
       scale_fill_lancet() +
       scale_shape_manual(values = c(16, 17)) +  # Custom shapes for methods
       labs(
@@ -326,7 +325,7 @@ plot_CI <- function(summary_df, vars_to_plot, file_format = "eps") {
     
     # Save plot with variable name as filename
     filename <- paste0(variable, ".", file_format)
-    full_path <- file.path("Figures/fig-turnover/beta", filename)
+    full_path <- file.path(save_path, filename)
     ggsave(full_path, p, width = 8, height = 6, device = file_format)
     
     # Print confirmation

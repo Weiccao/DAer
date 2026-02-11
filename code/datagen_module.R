@@ -1,18 +1,27 @@
+# Required packages:
+# MASS (for multivariate normal simulation)
+# dplyr, tibble (for parameter grid handling)
+# expectreg (enorm, et)
+
 #' @title generate_data
 #' @description Simulate covariates, event times, and true expectile regression
 #'              coefficients for a given scenario.
 #' @param n Number of observations to generate
 #' @param scenario Simulation scenario, e.g., "sim1", "sim2", ..., "sim8"
 #' @param target_Tau Vector of tau values for which expectiles are calculated (default seq(0.1, 0.9, 0.1))
+#' @param seed Integer, random seed for reproducibility.
 #' @return A list containing:
 #'         X - Covariate matrix (n x 2)
 #'         true_Y - True event times
 #'         true_Y_tau - True expectile values at each tau for each observation
 #'         betatrue - True expectile regression coefficients (intercept + slopes) for each tau
 #'         censor_params - Parameters used in the scenario (for reference)
-generate_data <- function(n, scenario = "sim1", target_Tau = seq(0.1, 0.9, 0.1)) {
+generate_data <- function(n, scenario = "sim1", 
+                          target_Tau = seq(0.1, 0.9, 0.1),
+                          seed = NULL) {
+  if (!is.null(seed)) set.seed(seed)
   
-  # 1. Set scenario-specific parameters
+  # Set scenario-specific parameters
   params <- switch(
     scenario,
     "sim1" = list(beta0 = 1, beta1 = c(2, -1), gamma0 = 1, gamma1 = c(2, -1), x_dist = "unif", err_dist = "norm", sd = 0, censor_type = "right"),
@@ -28,7 +37,7 @@ generate_data <- function(n, scenario = "sim1", target_Tau = seq(0.1, 0.9, 0.1))
   
   SNR <- 4 # Signal-to-noise ratio
 
-  # 2. Generate covariates X
+  # Generate covariates X
   if (params$x_dist == "unif") {
     X <- cbind(x1 = runif(n, 0, 1), x2 = runif(n, 0, 1))
   } else if (params$x_dist == "norm") {
@@ -41,9 +50,9 @@ generate_data <- function(n, scenario = "sim1", target_Tau = seq(0.1, 0.9, 0.1))
   X <- scale(X, center = TRUE, scale = FALSE) # Center covariates
   colnames(X) <- c("x1", "x2")
 
-  # 3. Generate error term and true expectiles
+  # Generate error term and true expectiles
   eps <- if (params$err_dist == "norm") rnorm(n) else rt(n, df = 3)
-  mu.tau <- if (params$err_dist == "norm") enorm(target_Tau) else et(target_Tau, df = 3)
+  mu.tau <- if (params$err_dist == "norm") expectreg::enorm(target_Tau) else expectreg::et(target_Tau, df = 3)
   
   t_loc <- params$beta0 + X %*% params$beta1
   sigma.X <- params$gamma0 * eps + X %*% params$gamma1 * eps
@@ -62,8 +71,7 @@ generate_data <- function(n, scenario = "sim1", target_Tau = seq(0.1, 0.9, 0.1))
     true_Y = true_Y,
     true_Y_tau = true_Y_tau,
     betatrue = betatrue,
-    censor_params = params
-  ))
+    censor_params = params))
 }
 
 
@@ -74,11 +82,14 @@ generate_data <- function(n, scenario = "sim1", target_Tau = seq(0.1, 0.9, 0.1))
 #' @param censor_rate Desired censoring proportion (0 < censor_rate < 1)
 #' @param censor_type Type of censoring: "right", "left", or "interval"
 #' @param L_fixed Fixed left boundary for interval censoring (optional, default -0.3)
+#' @param seed Integer, random seed for reproducibility.
 #' @return The data list updated with:
 #'         Y - Observed/censored outcome
 #'         delta - Indicator of observation (1=observed, 0=censored)
 #'         L, R - Censoring bounds (for interval censoring)
-apply_censoring_auto <- function(data, censor_rate, censor_type, L_fixed = -0.3) {
+apply_censoring_auto <- function(data, censor_rate, censor_type, L_fixed = -0.3,
+                                 seed = NULL) {
+  if (!is.null(seed)) set.seed(seed)
   
   if (!(censor_rate > 0 && censor_rate < 1)) stop("censor_rate must be between 0 and 1.")
   
@@ -126,7 +137,7 @@ apply_censoring_auto <- function(data, censor_rate, censor_type, L_fixed = -0.3)
     R <- runif(n, min = L, max = optimal_rmax)
     is_censored <- (true_Y >= L & true_Y <= R)
     
-    data$delta <- as.integer(is_censored)
+    data$delta <- as.integer(!is_censored)
     data$Y <- ifelse(data$delta == 0, (L + R) / 2, true_Y)
     data$L <- ifelse(data$delta == 1, data$Y, L)
     data$R <- ifelse(data$delta == 1, data$Y, R)
@@ -145,13 +156,16 @@ apply_censoring_auto <- function(data, censor_rate, censor_type, L_fixed = -0.3)
 #' @param data A list containing true_Y
 #' @param scenario Name of the simulation scenario (e.g., "sim1")
 #' @param censor_rate Desired censoring proportion
+#' @param seed Integer, random seed for reproducibility.
 #' @return The data list updated with:
 #'         Y - Observed/censored outcome
 #'         delta - Indicator of observation (1=observed, 0=censored)
 #'         L, R - Censoring bounds for interval or left/right censoring
 #'         actual_censor_rate - Actual proportion of censored observations
-apply_censoring_fixed <- function(data, scenario, censor_rate) {
-  param_grid <- tribble(
+apply_censoring_fixed <- function(data, scenario, censor_rate,
+                                  seed = NULL) {
+  if (!is.null(seed)) set.seed(seed)
+  param_grid <- tibble::tribble(
     ~scenario, ~censor_rate, ~censor_type, ~param1, ~param2,
     # --- Scenario 1-4 (Right Censoring) ---
     # For right censoring, param2 is R_max
